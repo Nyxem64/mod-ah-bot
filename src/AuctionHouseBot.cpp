@@ -384,6 +384,10 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
                     stackCount = urand(1, item->GetMaxStackCount());
                 else
                     stackCount = 1;
+
+                if (prototype->Class == ITEM_CLASS_GLYPH)
+                    stackCount = 1;
+                
                 buyoutPrice *= urand(config->GetMinPrice(prototype->Quality), config->GetMaxPrice(prototype->Quality));
                 buyoutPrice /= 100;
                 bidPrice = buyoutPrice * urand(config->GetMinBidPrice(prototype->Quality), config->GetMaxBidPrice(prototype->Quality));
