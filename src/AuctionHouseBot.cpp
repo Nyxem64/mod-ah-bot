@@ -376,6 +376,11 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
             else
                 buyoutPrice = prototype->SellPrice;
 
+            if (buyoutPrice == 0){
+                buyoutPrice = urand(config->GetMinPrice(prototype->Quality), config->GetMaxPrice(prototype->Quality));
+                buyoutPrice /= 100;
+            }
+
             if (prototype->Quality <= AHB_MAX_QUALITY)
             {
                 if (config->GetMaxStack(prototype->Quality) > 1 && item->GetMaxStackCount() > 1)
@@ -385,7 +390,7 @@ void AuctionHouseBot::addNewAuctions(Player *AHBplayer, AHBConfig *config)
                 else
                     stackCount = 1;
 
-                if (prototype->Class == ITEM_CLASS_GLYPH)
+                if (prototype->Class == ITEM_CLASS_GLYPH || prototype->SubClass == ITEM_SUBCLASS_ITEM_ENHANCEMENT)
                     stackCount = 1;
                 
                 buyoutPrice *= urand(config->GetMinPrice(prototype->Quality), config->GetMaxPrice(prototype->Quality));
@@ -863,7 +868,12 @@ void AuctionHouseBot::Initialize()
                 break;
             }
 
-            if (SellMethod)
+            // #added get rid of white quality or lower armor and weapons as they are practically useless
+            if (itr->second.Quality <= 1 && itr->second.Bonding == NO_BIND && (itr->second.Class == ITEM_CLASS_ARMOR || itr->second.Class == ITEM_CLASS_WEAPON))
+                continue;
+
+            // #changed commented out so that missing items like enchants appear
+            /*if (SellMethod)
             {
                 if (itr->second.BuyPrice == 0)
                     continue;
@@ -872,7 +882,7 @@ void AuctionHouseBot::Initialize()
             {
                 if (itr->second.SellPrice == 0)
                     continue;
-            }
+            }*/
 
             if (itr->second.Quality > 6)
                 continue;
